@@ -6,6 +6,7 @@ import (
 
 	"github.com/Alia5/SISR/cmd"
 	"github.com/Alia5/SISR/event/handler"
+	"github.com/Alia5/SISR/gyroaim"
 	"github.com/Alia5/SISR/input/viiperdevice"
 	"github.com/Alia5/SISR/sdl"
 )
@@ -24,6 +25,7 @@ func sensorUpdate(c *cmd.SISRContext) func(ctx context.Context, ev *sdl.GamepadS
 	c.Config.Unlock()
 
 	return func(ctx context.Context, ev *sdl.GamepadSensorEvent) error {
+		gyroaim.DiagRawSensor()
 		gpID := sdl.GamepadID(ev.Which)
 		dev, ok := c.DeviceStore.DeviceForID(gpID)
 		if !ok {
@@ -55,7 +57,17 @@ func sensorUpdate(c *cmd.SISRContext) func(ctx context.Context, ev *sdl.GamepadS
 		dType := dev.ViiperDevice.Type()
 		switch dType {
 		case viiperdevice.DeviceTypeXbox360:
-			// no gyro to update
+			// No gyro on an Xbox 360 pad; GTA V gyro aim maps it onto the right stick instead.
+			if sdl.SensorType(ev.Sensor) == sdl.SensorTypeGyroscope {
+				dev.GyroAim.SetGyro([3]float32{ev.Data0, ev.Data1, ev.Data2})
+				c.Config.Lock()
+				gyroCfg := gyroaim.FromConfig(c.Config.ControllerEmulation)
+				c.Config.Unlock()
+				if gyroaim.ApplyXbox360(&dev.GyroAim, gyroCfg, dev.ViiperDevice.State(), false) {
+					// Always send: the stick must follow the gyro even when Steam reports nothing new.
+					dev.ViiperDevice.QueueStateSend()
+				}
+			}
 		case viiperdevice.DeviceTypeDualShock4:
 			sensorType := sdl.SensorType(ev.Sensor)
 			if sensorType == sdl.SensorTypeGyroscope || sensorType == sdl.SensorTypeAccelerometer {

@@ -3,7 +3,7 @@ import createClient, { type FetchResponse } from 'openapi-fetch';
 import type { paths } from './openapi';
 import { error } from '@sveltejs/kit';
 
-const apiURL = `${window.location.protocol}//localhost:${
+export const apiURL = `${window.location.protocol}//localhost:${
     Number.parseInt(document?.documentElement?.getAttribute('data-api-port') ?? '', 10) || 5746
 }`;
 

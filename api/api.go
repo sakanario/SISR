@@ -3,6 +3,7 @@ package api
 import (
 	"github.com/Alia5/SISR/api/handler/config"
 	"github.com/Alia5/SISR/api/handler/devices"
+	"github.com/Alia5/SISR/api/handler/gyroaim"
 	"github.com/Alia5/SISR/api/handler/initiallaunch"
 	"github.com/Alia5/SISR/api/handler/quit"
 	"github.com/Alia5/SISR/api/handler/restart"
@@ -24,4 +25,5 @@ func RegisterAPI(hAPI huma.API, c *cmd.SISRContext) {
 	ui.Register(hAPI, c)
 	config.Register(hAPI, c)
 	restart.Register(hAPI, c)
+	gyroaim.Register(hAPI, c)
 }

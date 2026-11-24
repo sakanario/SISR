@@ -13,6 +13,7 @@ import (
 	"github.com/Alia5/SISR/cmd"
 	"github.com/Alia5/SISR/config"
 	"github.com/Alia5/SISR/event"
+	"github.com/Alia5/SISR/gyroaim"
 	"github.com/Alia5/SISR/helper"
 	"github.com/Alia5/SISR/input"
 	"github.com/Alia5/SISR/input/steaminputbindings"
@@ -100,6 +101,10 @@ func (s *SISR) Run(cfg config.Global) error {
 	if err != nil {
 		slog.Error("Failed to initialize SDL Haptic subsystem", "error", err)
 		return err
+	}
+
+	if err := gyroaim.LoadInto(&s.ControllerEmulation); err != nil {
+		slog.Warn("Failed to load saved gyro aim settings; using defaults", "error", err)
 	}
 
 	trayNotifyCh := make(chan any, 10)

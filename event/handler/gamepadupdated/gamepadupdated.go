@@ -6,6 +6,7 @@ import (
 
 	"github.com/Alia5/SISR/cmd"
 	"github.com/Alia5/SISR/event/handler"
+	"github.com/Alia5/SISR/gyroaim"
 	"github.com/Alia5/SISR/input/viiperdevice"
 	"github.com/Alia5/SISR/sdl"
 )
@@ -82,6 +83,10 @@ func gpUpdate(c *cmd.SISRContext) func(ctx context.Context, ev *sdl.GamepadDevic
 		switch dType {
 		case viiperdevice.DeviceTypeXbox360:
 			toXbox360State(dev.SteamVirtualGamepad, dev.ViiperDevice.State())
+			c.Config.Lock()
+			gyroCfg := gyroaim.FromConfig(c.Config.ControllerEmulation)
+			c.Config.Unlock()
+			gyroaim.ApplyXbox360(&dev.GyroAim, gyroCfg, dev.ViiperDevice.State(), true)
 		case viiperdevice.DeviceTypeDualShock4:
 			toDualShock4State(dev.SteamVirtualGamepad, dev.ViiperDevice.State())
 		case viiperdevice.DeviceTypeDualSense, viiperdevice.DeviceTypeDualSenseEdge:

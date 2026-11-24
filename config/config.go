@@ -57,6 +57,15 @@ type ControllerEmulation struct {
 
 	AllowSteamDesktopLayout bool `default:"false" help:"Allow/Use Steam's desktop configuration for emulated controllers" env:"SISR_ALLOW_STEAM_DESKTOP_LAYOUT"`
 	ImmediateSensorUpdates  bool `default:"true" help:"Immediately send sensor updates to VIIPER instead of waiting for the next input report; may reduce latency at the cost of increased CPU usage" env:"SISR_IMMEDIATE_SENSOR_UPDATES"`
+
+	// GTA V gyro aim (needs GyroAim.asi in the game folder). Xbox 360 emulation only.
+	GyroAim            bool    `default:"true" help:"Add gyro to the right stick while GTA V (GyroAim.asi) reports the player is aiming" env:"SISR_GYRO_AIM"`
+	GyroAimSensitivity float64 `default:"3" help:"Gyro aim: sensitivity multiplier (full stick at 360/sensitivity deg/s)" env:"SISR_GYRO_AIM_SENSITIVITY"`
+	GyroAimPowerCurve  float64 `default:"1" help:"Gyro aim: joystick power curve; 0.1 aggressive, 1 linear, 4 relaxed" env:"SISR_GYRO_AIM_POWER_CURVE"`
+	GyroAimMinOutput   float64 `default:"0.15" help:"Gyro aim: smallest stick deflection (0-1) for movement past the deadband, to get past the game's stick deadzone" env:"SISR_GYRO_AIM_MIN_OUTPUT"`
+	GyroAimDeadband    float64 `default:"1" help:"Gyro aim: angular speed in deg/s below which gyro is ignored (jitter/drift)" env:"SISR_GYRO_AIM_DEADBAND"`
+	GyroAimInvertX     bool    `default:"false" help:"Gyro aim: invert horizontal gyro" env:"SISR_GYRO_AIM_INVERT_X"`
+	GyroAimInvertY     bool    `default:"false" help:"Gyro aim: invert vertical gyro" env:"SISR_GYRO_AIM_INVERT_Y"`
 }
 
 type Viiper struct {

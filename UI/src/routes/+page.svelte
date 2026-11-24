@@ -11,13 +11,16 @@ import { tooltip } from '$lib/attachments/tooltip.svelte';
 import CheckInitialSetup from '$lib/op/check-initial-setup.svelte';
 import UpdateModal from '$lib/components/UpdateModal.svelte';
 
+import GyroAimCard from '$lib/components/MainCards/GyroAimCard.svelte';
 import IcoSettings from '~icons/mdi/cog';
+import IcoCrosshair from '~icons/mdi/crosshairs-gps';
 import IcoMinimize from '~icons/mdi/window-minimize';
 
 let { data }: PageProps = $props();
 
 let debugInfoCardVisible = $state(false);
 let quickSettingsVisible = $state(false);
+let gyroAimVisible = $state(false);
 
 let setupChecker = $state<CheckInitialSetup>()!;
 
@@ -49,6 +52,9 @@ onMount(() => {
 				config={data.config}
 				onClose={() => (quickSettingsVisible = false)} />
 		{/if}
+		{#if gyroAimVisible}
+			<GyroAimCard onClose={() => (gyroAimVisible = false)} />
+		{/if}
 		{#if debugInfoCardVisible}
 			<DebugInfoCard
 				steamStatusInfo={data.steamStatus}
@@ -67,6 +73,11 @@ onMount(() => {
 				bind:checked={quickSettingsVisible} />
 			<IcoSettings style="width: 2em; height: 2em;" />
 			<span>Quick Settings</span>
+		</label>
+		<label class="button" for="gyroAimToggle">
+			<input type="checkbox" id="gyroAimToggle" name="gyroAimToggle" bind:checked={gyroAimVisible} />
+			<IcoCrosshair style="width: 2em; height: 2em;" />
+			<span>Gyro Aim</span>
 		</label>
 		<label class="button" for="debugInfoCardToggle">
 			<input

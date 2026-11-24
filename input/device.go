@@ -5,6 +5,7 @@ import (
 	"math"
 	"sync"
 
+	"github.com/Alia5/SISR/gyroaim"
 	"github.com/Alia5/SISR/input/viiperdevice"
 	"github.com/Alia5/SISR/sdl"
 	"github.com/Alia5/VIIPER/device/dualsense"
@@ -18,6 +19,7 @@ type Device struct {
 	RealGamepad         *sdl.Gamepad
 	SteamVirtualGamepad *sdl.Gamepad
 	ViiperDevice        *viiperdevice.Device
+	GyroAim             gyroaim.State // GTA V gyro aim state; guarded by mtx
 
 	mtx sync.Mutex
 }
