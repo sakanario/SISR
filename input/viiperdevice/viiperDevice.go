@@ -130,16 +130,24 @@ func (d *Device) QueueStateSend() {
 		return
 	}
 
-	select {
-	case <-d.done:
-		slog.Warn("Attempted to update VIIPER device after it was closed")
-		return
-	case d.stateChan <- data:
-		return
-	default:
-		// Buffer full: keep freshest state (drop oldest pending packet).
+	// Each packet is a full state snapshot, so only the newest one matters.
+	// When the buffer is full, drop the oldest pending packet and retry, so the latest
+	// state (e.g. "stick released") is never the one that gets lost.
+	// Callers hold the device lock, so there is a single producer.
+	for {
+		select {
+		case <-d.done:
+			slog.Warn("Attempted to update VIIPER device after it was closed")
+			return
+		case d.stateChan <- data:
+			return
+		default:
+		}
+		select {
+		case <-d.stateChan:
+		default:
+		}
 	}
-
 }
 
 func (d *Device) handleState() {
